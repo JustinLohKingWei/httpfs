@@ -13,16 +13,6 @@ def main():
         printDebug()
     print(args.p)
     print(args.d)
-    # parser.add_argument('--input', action='store', type=int, required=True)
-    # input = sys.argv[1:]
-    # inputString = " ".join(input)
-    # print(">"+inputString+"<")
-    # if("-v" in inputString):
-    #     printDebug()
-    # if("-p" in inputString):
-    #     server()
-    # if("--help" in inputString):
-    #     printHelp()
 
 
     
