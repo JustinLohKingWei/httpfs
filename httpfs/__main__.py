@@ -1,5 +1,4 @@
 import argparse
-import sys
 from .printDebug import printDebug
 from .server import server
 
@@ -11,11 +10,8 @@ def main():
     args = parser.parse_args()
     if args.v:
         printDebug()
-    print(args.p)
-    print(args.d)
+    server(args.p)
 
-
-    
 
 if __name__ == '__main__':
     main()
