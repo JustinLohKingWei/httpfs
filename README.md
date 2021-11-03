@@ -9,6 +9,7 @@ A simple file server and my first python app
 1. The project can be removed with $ pip uninstall -e.
 
 # Test Commands
-curl localhost:8080
-telnet localhost 5050
-curl --header "Content-Type: application/json" -d "{\"value\":\"node JS\"}" localhost:8080
+1. curl localhost:8080
+2. telnet localhost 5050
+3. http://localhost:8080/foo
+4. curl --header "Content-Type: application/json" -d "{\"value\":\"node JS\"}" localhost:8080
