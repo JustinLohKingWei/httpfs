@@ -7,3 +7,8 @@ A simple file server and my first python app
 
 # Uninstallation
 1. The project can be removed with $ pip uninstall -e.
+
+# Test Commands
+curl localhost:8080
+telnet localhost 5050
+curl --header "Content-Type: application/json" -d "{\"value\":\"node JS\"}" localhost:8080

@@ -10,13 +10,27 @@ def handle_Request(connInput, addrInput):
     conn = connInput
     addr = addrInput
     print(f'NEW CONNECTION: {addr}connected')
-    # connected = True
-    # conn.send('Zoo wee mama').encode(FORMAT)
-    # while connected:
-    #     msg_length= int(conn.recv(HEADER).decode(FORMAT))
-    #     msg = conn.recv(msg_length).decode(FORMAT)
-    #     print(f'{addr} says : {msg}')
-    #     connected = False
+    connected = True
+    from_client = ''
+    while connected:
+        data = conn.recv(4096)
+        if not data: break
+        from_client += data.decode(FORMAT)
+        print ("FROM CLIENT: \n"+from_client)
+        headers = from_client.split('\r\n', 1)
+        request_type = headers[0].split(' /',1)
+        # print(headers[0])
+        # print(request_type[0])
+        headers = headers[0]
+        request_type = request_type[0]
+        if request_type=='GET':
+            print("Received GET request")
+        elif request_type == 'POST':
+            print("Received POST request")
+        else:
+            print("Request type not supported at this time")
+        connected = False
+
     conn.close()
     print('Connection closed')
 
