@@ -1,43 +1,71 @@
 import socket
 import threading
 import os
+from pathlib import Path
 
 HEADER = 64
 FORMAT = 'utf-8'
 
 
-def do_Get(connInput, request):
-    files = os.listdir('data')
+def do_Get(connInput, request ,directoryInput):
+    files = os.listdir(directoryInput)
     code = "200 OK"
     body = ""
     query = request.split('/', 1)
-    query = query[1]
+    query = query[1].strip()
+    print(f"QUERY:{query}")
     if query == "":
         for f in files:
             print(f)
-            body += f
+            body += f.strip()
             body += "\n"
     else:
-        body += "Some file content"
         body += "\n"
-        #implement GET /foo
+        test_Path = Path(directoryInput+"/"+query)
+        file_Exists = os.path.isfile(test_Path)
+        print(f"FILE EXISTS? : {file_Exists}")
+        if file_Exists:
+            print(f'{query} is found!')
+            with open(test_Path) as f:
+                lines = f.readlines()
+            for l in lines:
+                body+=l
+        else:
+            print('NOT FOUND')
+            code = "404 NOT FOUND"
+            body+= "Content not available on this server\n"
 
     response = "HTTP/1.1 "+code+"\n"+"Content-Type: text/html\n"+"\n"
     response += body+"\n"
     connInput.send(response.encode(FORMAT))
 
 
-def do_Post(connInput, request):
-    files = os.listdir('/data')
+def do_Post(connInput, request ,directoryInput,bodyInput):
     code = "200 OK"
     body = ""
-    #implement POST /foo
+    query = request.split('/', 1)
+    query = query[1].strip()
+    print(f"QUERY:{query}")
+    body += "\n"
+    test_Path = Path(directoryInput+"/"+query)
+    file_Exists = os.path.isfile(test_Path)
+    print(f"FILE EXISTS? : {file_Exists}")
+    if file_Exists:
+            print(f'{query} is found!')
+            f = open(test_Path, "a")
+            f.write(bodyInput)
+            f.close()   
+    else:
+        print('NOT FOUND')
+        code = "404 NOT FOUND"
+        body+= "Content not available on this server\n"
+
     response = "HTTP/1.1 "+code+"\n"+"Content-Type: text/html\n"+"\n"
     response += body+"\n"
     connInput.send(response.encode(FORMAT))
 
 
-def handle_Request(connInput, addrInput):
+def handle_Request(connInput, addrInput ,directoryInput):
     conn = connInput
     addr = addrInput
     print(f'NEW CONNECTION: {addr}connected')
@@ -57,10 +85,12 @@ def handle_Request(connInput, addrInput):
         request_type = request_type[0]
         if request_type == 'GET':
             print("Received GET request")
-            do_Get(conn, request)
+            do_Get(conn, request ,directoryInput)
         elif request_type == 'POST':
             print("Received POST request")
-            do_Post(conn, request)
+            body = from_client.split('\r\n\r\n', 1)
+            body= body[1].strip()
+            do_Post(conn, request ,directoryInput,body)
         else:
             print("Request type is not supported at this time")
             print(request)
@@ -70,22 +100,22 @@ def handle_Request(connInput, addrInput):
     print('Connection closed')
 
 
-def start(serverInput, serveraddr):
+def start(serverInput, serveraddr ,directoryInput):
     server = serverInput
     server.listen()
     print(f"Server is listening on {serveraddr}")
     while True:
         conn, addr = server.accept()
-        thread = threading.Thread(target=handle_Request, args=(conn, addr))
+        thread = threading.Thread(target=handle_Request, args=(conn, addr ,directoryInput))
         thread.start()
         print(f"ACTIVE CONNECTIONS : {threading.active_count()-1}")
 
 
-def server(portInput):
+def server(portInput,directoryInput):
     PORT = portInput
     SERVER = socket.gethostbyname(socket.gethostname())
     ADDR = ('', PORT)
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind(ADDR)
     print(f"{SERVER} server starting at port {PORT} ")
-    start(server, SERVER)
+    start(server, SERVER ,directoryInput)

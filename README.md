@@ -11,5 +11,5 @@ A simple file server and my first python app
 # Test Commands
 1. curl localhost:8080
 2. telnet localhost 5050
-3. http://localhost:8080/foo
-4. curl --header "Content-Type: application/json" -d "{\"value\":\"node JS\"}" localhost:8080
+3. curl -v http://localhost:5050/testWrite.txt
+4. curl --header "Content-Type: application/json" -d "{\"value\":\"node JS\"}" http://localhost:5050/testWrite.txt

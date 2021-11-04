@@ -1,1 +1,4 @@
-Welcome to foo!
+Roses are red
+Violets are blue
+This is a text file
+and I called it foo!
