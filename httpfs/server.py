@@ -55,6 +55,7 @@ def do_Post(connInput, request ,directoryInput,bodyInput):
             f = open(test_Path, "a")
             f.write(bodyInput)
             f.close()   
+            body+="Content appended to end of file.\n"
     else:
         print('NOT FOUND')
         code = "404 NOT FOUND"
@@ -83,7 +84,15 @@ def handle_Request(connInput, addrInput ,directoryInput):
         headers = headers[0]
         request = request[0]
         request_type = request_type[0]
-        if request_type == 'GET':
+        if directoryInput=="httpfs":
+            print("Authorization blocked")
+            code = "403 FORBIDDEN\n"
+            body = "Request type is not supported at this time"
+            response = "HTTP/1.1 "+code+"\n"+"Content-Type: text/html\n"+"\n"
+            response += body+"\n\n"
+            connInput.send(response.encode(FORMAT))
+
+        elif request_type == 'GET':
             print("Received GET request")
             do_Get(conn, request ,directoryInput)
         elif request_type == 'POST':
@@ -92,8 +101,12 @@ def handle_Request(connInput, addrInput ,directoryInput):
             body= body[1].strip()
             do_Post(conn, request ,directoryInput,body)
         else:
-            print("Request type is not supported at this time")
-            print(request)
+            print("Request not understood")
+            code = "301 BAD REQUEST\n"
+            body = "Request type is not supported at this time"
+            response = "HTTP/1.1 "+code+"\n"+"Content-Type: text/html\n"+"\n"
+            response += body+"\n\n"
+            connInput.send(response.encode(FORMAT))
         connected = False
 
     conn.close()
